@@ -28,7 +28,6 @@ jobs:
           user: giraffishh
           template: classic
           base: header, activity, community, repositories, metadata
-          config_display: columns
           config_timezone: Asia/Shanghai
           plugin_followup: yes
           plugin_followup_archived: yes
@@ -48,7 +47,6 @@ jobs:
           plugin_lines_history_limit: 1
           plugin_lines_repositories_limit: 4
           plugin_lines_sections: base
-          plugin_people: yes
-          plugin_people_limit: 12
-          plugin_people_size: 28
-          plugin_people_types: followers, following
+          plugin_pagespeed: yes
+          plugin_pagespeed_pwa: yes
+          plugin_pagespeed_url: blog.giraffishh.me
