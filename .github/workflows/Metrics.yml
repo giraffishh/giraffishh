@@ -28,6 +28,7 @@ jobs:
           user: giraffishh
           template: classic
           base: header, activity, community, repositories, metadata
+          config_display: columns
           config_timezone: Asia/Shanghai
           plugin_followup: yes
           plugin_followup_archived: yes
@@ -49,4 +50,5 @@ jobs:
           plugin_lines_sections: base
           plugin_pagespeed: yes
           plugin_pagespeed_pwa: yes
-          plugin_pagespeed_url: blog.giraffish.me
+          plugin_pagespeed_token: ${{ secrets.PAGESPEED_TOKEN }}
+          plugin_pagespeed_url: https://blog.giraffish.me
