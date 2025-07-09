@@ -49,4 +49,4 @@ jobs:
           plugin_lines_sections: base
           plugin_pagespeed: yes
           plugin_pagespeed_pwa: yes
-          plugin_pagespeed_url: blog.giraffishh.me
+          plugin_pagespeed_url: blog.giraffish.me
