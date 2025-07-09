@@ -28,7 +28,6 @@ jobs:
           user: giraffishh
           template: classic
           base: header, activity, community, repositories, metadata
-          config_display: columns
           config_timezone: Asia/Shanghai
           plugin_followup: yes
           plugin_followup_archived: yes
