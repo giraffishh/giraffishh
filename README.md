@@ -1,4 +1,4 @@
-<img src="/github-metrics.svg" alt="Metrics">
+<img src="/github-metrics.svg" alt="Metrics" width="100%">
 
 <!--
 <a href="https://github.com/ashutosh00710/github-readme-activity-graph">
