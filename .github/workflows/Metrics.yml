@@ -30,17 +30,18 @@ jobs:
           base: header, activity, community, repositories, metadata
           config_display: large
           config_timezone: Asia/Shanghai
-          config_order: base.header, base.activity+community, base.repositories, followup, people, languages
+          config_order: base.header, base.activity+community, base.repositories, followup, topics, languages
 
           plugin_followup: yes
           plugin_followup_archived: yes
           plugin_followup_sections: repositories
 
-          # People
-          plugin_people: yes
-          plugin_people_types: followers, following
-          plugin_people_limit: 12
-          plugin_people_size: 32
+          # Starred topics: show every available topic icon up to the plugin maximum.
+          # Note: icon mode only renders starred topics for which GitHub provides an icon.
+          plugin_topics: yes
+          plugin_topics_mode: icons
+          plugin_topics_sort: starred
+          plugin_topics_limit: 20
 
           plugin_languages: yes
           plugin_languages_ignored: html, jupyter notebook
@@ -60,29 +61,25 @@ jobs:
           plugin_lines_repositories_limit: 4
           plugin_lines_sections: base
 
-          # Group People sections into the free right-hand half of the large layout.
+          # Keep Starred topics in the free right-hand half of the large layout.
           extras_js: |
-            const peopleSections = [...document.querySelectorAll('section')].filter(section => {
-              const heading = section.querySelector(':scope > h2');
-              if (!heading) return false;
-              const text = heading.textContent.trim().toLowerCase();
-              return text.includes('follower') || text.includes('followed');
-            });
-            if (peopleSections.length) {
-              const wrapper = document.createElement('div');
-              wrapper.className = 'people-half';
-              const first = peopleSections[0];
-              first.parentNode.insertBefore(wrapper, first);
-              peopleSections.forEach(section => wrapper.appendChild(section));
-            }
+            const topicHeading = [...document.querySelectorAll('h2')]
+              .find(h => h.textContent.includes('Starred topics') || h.textContent.includes('Mastered technologies and topics'));
+            if (topicHeading) topicHeading.parentElement.classList.add('topics-half');
           extras_css: |
-            svg.large .people-half {
+            svg.large section.topics-half {
               display: inline-flex;
               flex-direction: column;
               width: 474px;
               vertical-align: top;
               box-sizing: border-box;
             }
-            svg.large .people-half > section {
-              width: 100%;
+            svg.large section.topics-half .topics {
+              gap: 6px;
+              align-items: center;
+            }
+            svg.large section.topics-half .topics img {
+              width: 32px;
+              height: 32px;
+              margin: 4px 6px;
             }
