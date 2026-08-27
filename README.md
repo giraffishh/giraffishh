@@ -1,5 +1,6 @@
 <img src="/github-metrics.svg" alt="Metrics">
 
+<!--
 <a href="https://github.com/ashutosh00710/github-readme-activity-graph">
   <picture>
     <source 
@@ -10,3 +11,4 @@
       alt="Giraffish's github activity graph">
   </picture>
 </a>
+-->
