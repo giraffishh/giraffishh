@@ -1,9 +1,7 @@
 # Visit https://github.com/lowlighter/metrics#-documentation for full reference
 name: Metrics
 on:
-  # Schedule updates (each hour)
   schedule: [{cron: "0 */2 * * *"}]
-  # Lines below let you run workflow manually and on each commit
   workflow_dispatch:
   push: {branches: ["master", "main"]}
 jobs:
@@ -14,12 +12,11 @@ jobs:
     steps:
       - uses: lowlighter/metrics@latest
         with:
-          # Your GitHub token
           token: ${{ secrets.METRICS_TOKEN }}
 
-          # Options
           user: giraffishh
           template: classic
+          filename: github-metrics-v2.svg
           base: header, activity, community, repositories, metadata
           config_display: large
           config_timezone: Asia/Shanghai
@@ -47,35 +44,29 @@ jobs:
           plugin_lines_repositories_limit: 4
           plugin_lines_sections: base
 
-          # Add a self-contained, icon-style technology/topic grid in the free
-          # right-hand half of the large layout. This intentionally does not use
-          # plugin_topics, so it is not limited by GitHub's manually-starred topics.
+          # Custom half-width module using canonical brand marks from Simple Icons.
+          # Abstract research topics without an official logo are intentionally omitted
+          # rather than represented by fake initials/emoji.
           extras_js: |
             const technologies = [
-              ['🔥', 'PyTorch'],
-              ['🤗', 'Hugging Face'],
-              ['🐍', 'Python'],
-              ['☕', 'Java'],
-              ['🐧', 'Linux'],
-              ['🌿', 'Git'],
-              ['Σ', 'LaTeX'],
-              ['⚙', 'Slurm'],
-              ['◉', 'Conda'],
-              ['T', 'Transformer'],
-              ['ViT', 'Vision Transformer'],
-              ['CNX', 'ConvNeXt'],
-              ['CLIP', 'CLIP'],
-              ['VLM', 'Vision-Language Models'],
-              ['VLA', 'Vision-Language-Action'],
-              ['DM', 'Diffusion Models (DDPM / DDIM)'],
-              ['FM', 'Flow Matching'],
-              ['LoRA', 'PEFT / LoRA'],
-              ['KD', 'Knowledge Distillation'],
-              ['DDP', 'Distributed Training'],
-              ['OD', 'Object Detection'],
-              ['MM', 'Multimodal Learning'],
-              ['Rep', 'Representation Learning'],
-              ['AC', 'Action Chunking'],
+              ['pytorch', 'EE4C2C', 'PyTorch'],
+              ['huggingface', 'FFD21E', 'Hugging Face'],
+              ['python', '3776AB', 'Python'],
+              ['openjdk', '000000', 'OpenJDK'],
+              ['linux', 'FCC624', 'Linux'],
+              ['git', 'F05032', 'Git'],
+              ['latex', '008080', 'LaTeX'],
+              ['anaconda', '44A833', 'Anaconda'],
+              ['jupyter', 'F37626', 'Jupyter'],
+              ['opencv', '5C3EE8', 'OpenCV'],
+              ['scikitlearn', 'F7931E', 'scikit-learn'],
+              ['numpy', '013243', 'NumPy'],
+              ['pandas', '150458', 'pandas'],
+              ['nvidia', '76B900', 'NVIDIA'],
+              ['github', '181717', 'GitHub'],
+              ['visualstudiocode', '007ACC', 'VS Code'],
+              ['postgresql', '4169E1', 'PostgreSQL'],
+              ['docker', '2496ED', 'Docker'],
             ];
 
             const languagesHeading = [...document.querySelectorAll('h2')]
@@ -88,21 +79,27 @@ jobs:
 
               const heading = document.createElement('h2');
               heading.className = 'field mastered-heading';
-              heading.innerHTML = '<span class="mastered-pin">📌</span>Mastered technologies and topics';
+              heading.textContent = '📌 Mastered technologies and topics';
               section.appendChild(heading);
 
               const grid = document.createElement('div');
               grid.className = 'mastered-grid';
 
-              for (const [icon, label] of technologies) {
+              for (const [slug, color, label] of technologies) {
                 const item = document.createElement('div');
                 item.className = 'mastered-item';
                 item.title = label;
 
-                const mark = document.createElement('span');
-                mark.className = icon.length > 3 ? 'mastered-mark mastered-mark-small' : 'mastered-mark';
-                mark.textContent = icon;
-                item.appendChild(mark);
+                const img = document.createElement('img');
+                img.className = 'mastered-logo';
+                img.src = `https://cdn.simpleicons.org/${slug}/${color}`;
+                img.alt = label;
+                item.appendChild(img);
+
+                const text = document.createElement('span');
+                text.className = 'mastered-label';
+                text.textContent = label;
+                item.appendChild(text);
 
                 grid.appendChild(item);
               }
@@ -122,38 +119,38 @@ jobs:
             svg.large .mastered-heading {
               margin-bottom: 8px;
             }
-            svg.large .mastered-pin {
-              width: 16px;
-              margin: 0 8px;
-              display: inline-flex;
-              align-items: center;
-              justify-content: center;
-            }
             svg.large .mastered-grid {
               display: grid;
-              grid-template-columns: repeat(8, 1fr);
-              gap: 8px;
+              grid-template-columns: repeat(6, 1fr);
+              gap: 7px;
               width: 100%;
               padding: 2px 8px 8px 8px;
               box-sizing: border-box;
             }
             svg.large .mastered-item {
-              height: 42px;
+              min-width: 0;
+              height: 54px;
               display: flex;
+              flex-direction: column;
               align-items: center;
               justify-content: center;
-              border: 1px solid rgba(149, 157, 165, 0.28);
+              gap: 4px;
+              border: 1px solid rgba(149, 157, 165, 0.24);
               border-radius: 8px;
-              background: rgba(149, 157, 165, 0.07);
+              background: rgba(149, 157, 165, 0.06);
               box-sizing: border-box;
             }
-            svg.large .mastered-mark {
-              font-size: 15px;
-              line-height: 1;
-              font-weight: 600;
-              color: #586069;
-              white-space: nowrap;
+            svg.large .mastered-logo {
+              width: 27px;
+              height: 27px;
+              object-fit: contain;
             }
-            svg.large .mastered-mark-small {
-              font-size: 10px;
+            svg.large .mastered-label {
+              max-width: 66px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              font-size: 8px;
+              line-height: 1;
+              color: #586069;
             }
