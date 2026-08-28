@@ -4,6 +4,7 @@ on:
   schedule: [{cron: "0 */2 * * *"}]
   workflow_dispatch:
   push: {branches: ["master", "main"]}
+
 jobs:
   github-metrics:
     runs-on: ubuntu-latest
@@ -16,7 +17,7 @@ jobs:
 
           user: giraffishh
           template: classic
-          filename: github-metrics-v2.svg
+          filename: github-metrics.svg
           base: header, activity, community, repositories, metadata
           config_display: large
           config_timezone: Asia/Shanghai
@@ -44,15 +45,15 @@ jobs:
           plugin_lines_repositories_limit: 4
           plugin_lines_sections: base
 
-          # Custom half-width module using canonical brand marks from Simple Icons.
-          # Abstract research topics without an official logo are intentionally omitted
-          # rather than represented by fake initials/emoji.
+          # Custom half-width module. Official Simple Icons SVGs are fetched during
+          # rendering and inlined into the final SVG, so GitHub never has to load
+          # external image resources.
           extras_js: |
             const technologies = [
               ['pytorch', 'EE4C2C', 'PyTorch'],
               ['huggingface', 'FFD21E', 'Hugging Face'],
               ['python', '3776AB', 'Python'],
-              ['openjdk', '000000', 'OpenJDK'],
+              ['openjdk', '8B949E', 'OpenJDK'],
               ['linux', 'FCC624', 'Linux'],
               ['git', 'F05032', 'Git'],
               ['latex', '008080', 'LaTeX'],
@@ -60,11 +61,10 @@ jobs:
               ['jupyter', 'F37626', 'Jupyter'],
               ['opencv', '5C3EE8', 'OpenCV'],
               ['scikitlearn', 'F7931E', 'scikit-learn'],
-              ['numpy', '013243', 'NumPy'],
+              ['numpy', '4D77CF', 'NumPy'],
               ['pandas', '150458', 'pandas'],
               ['nvidia', '76B900', 'NVIDIA'],
-              ['github', '181717', 'GitHub'],
-              ['visualstudiocode', '007ACC', 'VS Code'],
+              ['github', '8B949E', 'GitHub'],
               ['postgresql', '4169E1', 'PostgreSQL'],
               ['docker', '2496ED', 'Docker'],
             ];
@@ -86,22 +86,32 @@ jobs:
               grid.className = 'mastered-grid';
 
               for (const [slug, color, label] of technologies) {
-                const item = document.createElement('div');
-                item.className = 'mastered-item';
-                item.title = label;
+                try {
+                  const response = await fetch(`https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/${slug}.svg`);
+                  if (!response.ok) throw new Error(`${slug}: HTTP ${response.status}`);
+                  const markup = await response.text();
+                  const parsed = new DOMParser().parseFromString(markup, 'image/svg+xml').documentElement;
+                  const logo = document.importNode(parsed, true);
+                  logo.classList.add('mastered-logo');
+                  logo.setAttribute('width', '27');
+                  logo.setAttribute('height', '27');
+                  logo.querySelectorAll('path').forEach(path => path.setAttribute('fill', `#${color}`));
 
-                const img = document.createElement('img');
-                img.className = 'mastered-logo';
-                img.src = `https://cdn.simpleicons.org/${slug}/${color}`;
-                img.alt = label;
-                item.appendChild(img);
+                  const item = document.createElement('div');
+                  item.className = 'mastered-item';
+                  item.title = label;
+                  item.appendChild(logo);
 
-                const text = document.createElement('span');
-                text.className = 'mastered-label';
-                text.textContent = label;
-                item.appendChild(text);
+                  const text = document.createElement('span');
+                  text.className = 'mastered-label';
+                  text.textContent = label;
+                  item.appendChild(text);
 
-                grid.appendChild(item);
+                  grid.appendChild(item);
+                }
+                catch (error) {
+                  console.error(`Failed to inline ${label} logo: ${error}`);
+                }
               }
 
               section.appendChild(grid);
@@ -143,7 +153,7 @@ jobs:
             svg.large .mastered-logo {
               width: 27px;
               height: 27px;
-              object-fit: contain;
+              flex: 0 0 auto;
             }
             svg.large .mastered-label {
               max-width: 66px;
